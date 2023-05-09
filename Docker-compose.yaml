@@ -1,0 +1,58 @@
+version: '0.9.1'
+services:
+  bot_db:
+    image: 'postgres:14'
+    environment:
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+      POSTGRES_DB: '${BOT_DB_NAME}'
+    ports:
+      - '5432:5432'
+    volumes:
+      - './bot_db:/var/lib/postgresql/data'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "${DB_USER}"]
+    
+  airflow_db:
+    image: 'postgres:14'
+    environment:
+      POSTGRES_USER: 'airflow'
+      POSTGRES_PASSWORD: 'airflow'
+      POSTGRES_DB: 'airflow'
+    ports:
+      - '5433:5432'
+    volumes:
+      - './airflow_db:/var/lib/postgresql/data'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-U", "airflow"]
+
+  airflow:
+    build: ./airflow/
+    environment:
+      DB_USER: '${DB_USER}'
+      DB_PASSWORD: '${DB_PASSWORD}'
+      DB_NAME: '${BOT_DB_NAME}'
+    volumes: 
+      - ./airflow/dags:/airflow/dags
+      - ./airflow/logs:/airflow/logs
+      - ./airflow/plugins:/airflow/plugins
+    ports:
+      - '8080:8080'
+    depends_on:
+      bot_db:
+        condition: service_healthy
+      airflow_db:
+        condition: service_healthy
+
+  tg_bot:
+    build: ./bot_app/
+    environment:
+      TOKEN: '${TOKEN}'
+      DB_USER: '${DB_USER}'
+      DB_PASSWORD: '${DB_PASSWORD}'
+      DB_NAME: '${BOT_DB_NAME}'
+    depends_on:
+      bot_db:
+        condition: service_healthy
+      airflow:
+        condition: service_started

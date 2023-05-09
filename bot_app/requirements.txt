@@ -1,0 +1,4 @@
+psycopg2-binary==2.9.6
+SQLAlchemy==2.0.10
+aiogram==2.25.1
+APScheduler==3.10.1
