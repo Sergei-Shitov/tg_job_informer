@@ -9,10 +9,10 @@ RUN airflow db init
 
 COPY ./airflow.cfg /root/airflow/airflow.cfg
 
+RUN mkdir /temp_storage
+RUN mkdir /temp_storage/csv
 RUN mkdir /airflow
 RUN mkdir /airflow/dags
-RUN mkdir /airflow/dags/temp_storage
-RUN mkdir /airflow/dags/temp_storage/csv
 
 EXPOSE 8080:8080
 

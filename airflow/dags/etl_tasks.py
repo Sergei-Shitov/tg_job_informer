@@ -50,9 +50,7 @@ def extract_job_from_hh():
 
         print(job_text)
 
-        path = pathlib.Path('airflow',
-                            'dags',
-                            'temp_storage',
+        path = pathlib.Path('temp_storage',
                             f'{job_text}_0.json'
                             )
 
@@ -70,9 +68,7 @@ def extract_job_from_hh():
 
             print(f'got {job} {page}')
 
-            sub_path = pathlib.Path('airflow',
-                                    'dags',
-                                    'temp_storage',
+            sub_path = pathlib.Path('temp_storage',
                                     f'{job_text}_{page}.json'
                                     )
 
@@ -110,9 +106,7 @@ def combine_to_csv():
     ])
 
     # set directory with jsons
-    dir = pathlib.Path('airflow',
-                       'dags',
-                       'temp_storage'
+    dir = pathlib.Path('temp_storage'
                        )
     counter = 0
 
@@ -133,9 +127,7 @@ def combine_to_csv():
 
             print(f'working with file {file_name}')
 
-            path = pathlib.Path('airflow',
-                                'dags',
-                                'temp_storage',
+            path = pathlib.Path('temp_storage',
                                 file_name
                                 )
             # open file
@@ -195,9 +187,7 @@ def combine_to_csv():
     print(f'succesefuly loaded {counter} lines')
 
     # save assembled table to csv
-    csv_path = pathlib.Path('/airflow',
-                            'dags',
-                            'temp_storage',
+    csv_path = pathlib.Path('/temp_storage',
                             'csv',
                             'result.csv'
                             )
@@ -206,9 +196,7 @@ def combine_to_csv():
 
 def job_stg_filling():
     '''Filling stage table in datatable'''
-    csv_path = pathlib.Path('/airflow',
-                            'dags',
-                            'temp_storage',
+    csv_path = pathlib.Path('/temp_storage',
                             'csv',
                             'result.csv'
                             )

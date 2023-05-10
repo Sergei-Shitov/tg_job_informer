@@ -1,4 +1,4 @@
-version: '0.9.1'
+version: '0.9.2'
 services:
   bot_db:
     image: 'postgres:14'
@@ -36,6 +36,7 @@ services:
       - ./airflow/dags:/airflow/dags
       - ./airflow/logs:/airflow/logs
       - ./airflow/plugins:/airflow/plugins
+      - ./temp_storage:/temp_storage
     ports:
       - '8080:8080'
     depends_on:
