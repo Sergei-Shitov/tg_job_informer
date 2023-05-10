@@ -308,6 +308,7 @@ def create_send_data_mart():
     engine = eng(f'postgresql://{DB_USER}:{DB_PASSWORD}@bot_db:5432/{DB_NAME}')
 
     send_mart = pd.read_sql(query, engine)
+    send_mart.drop_duplicates(inplace=True)
     send_mart.to_sql('users_vacs', index=False, con=engine, schema='marts',
                      if_exists='replace', method='multi')
 
