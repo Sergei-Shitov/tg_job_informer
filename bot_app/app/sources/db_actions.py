@@ -144,5 +144,6 @@ class DB_reqs():
 
 
 if __name__ == '__main__':
-    test = DB_reqs()
-    test.generate_report()
+    # test = DB_reqs()
+    # test.generate_report()
+    pass
