@@ -122,6 +122,9 @@ class DB_reqs():
     # -- GENERATE DAILY REPORT --
 
     def generate_report(self):
+        '''Get information about new jobs and generate messages'''
+
+        # Get list with user's ids and new jobs for them
         with self.engine.connect() as conn:
             db_req = (self
                       .users_vacs_table
@@ -130,9 +133,11 @@ class DB_reqs():
             vac_data = conn.execute(db_req).fetchall()
 
         result = {}
-        for id, *_ in vac_data:
-            result[id] = ''
+
+        # Generate messages for users
         for id, vac, url, company in vac_data:
+            if id not in result:
+                result[id] = ''
             result[id] += f'Компания: "{company}"\n{vac}\n{url}\n\n'
 
         return result
