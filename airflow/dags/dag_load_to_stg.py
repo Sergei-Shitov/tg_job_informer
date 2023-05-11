@@ -33,7 +33,7 @@ with DAG(
 
     rename_res = BashOperator(
         task_id='rename_res',
-        bash_command=f'mv /airflow/dags/temp_storage/csv/result.csv /airflow/dags/temp_storage/csv/result_{date.today()}.csv',
+        bash_command=f'mv /temp_storage/csv/result.csv /temp_storage/csv/result_{date.today()}.csv',
         dag=dag
     )
 

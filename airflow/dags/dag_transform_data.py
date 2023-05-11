@@ -33,7 +33,7 @@ with DAG(
 
     remove_json = BashOperator(
         task_id='clean_tmp_stg',
-        bash_command='rm /airflow/dags/temp_storage/*.json',
+        bash_command='rm /temp_storage/*.json',
         dag=dag
     )
 
