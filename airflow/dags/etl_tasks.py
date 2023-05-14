@@ -301,6 +301,30 @@ def create_send_data_mart():
                      if_exists='replace', method='multi')
 
 
+def update_closed_vacs():
+    '''Request for updating closed vacancies weekly'''
+    engine = eng(f'postgresql://{DB_USER}:{DB_PASSWORD}@bot_db:5432/{DB_NAME}')
+    query = '''
+    update dw.vac_list
+    set closed_at = sub.closed_at 
+    from (
+        select distinct
+            m.vac_id,
+            m.request_text,
+            max(m.load_date) over(partition by m.vac_id) as closed_at
+        from 
+            job_stg.main m
+        ) as sub
+    where
+        dw.vac_list.vac_id = sub.vac_id and 
+        sub.closed_at != date(now()) and 
+        dw.vac_list.closed_at isnull;
+    '''
+    with engine.connect() as conn:
+        conn.execute(query)
+        conn.commit()
+
+
 if __name__ == '__main__':
     #
     # used for developing and testing
