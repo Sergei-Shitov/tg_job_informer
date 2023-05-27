@@ -93,6 +93,7 @@ class DB_reqs():
     # -- ADDING "USER - REQUESTS" LINKS --
 
     def add_user_req_links(self, user_id: int, req: list):
+        '''Add links between the user and requests'''
         lower_req = [item.lower() for item in req]
         # get ids for user's requests
         with self.engine.connect() as conn:
@@ -142,8 +143,36 @@ class DB_reqs():
 
         return result
 
+    # -- GET INFORMATION ABOUT SUBSCRIPTIONS --
+
+    def get_list_of_subscribes(self, user_id: int):
+        '''Get information about subscriptions for user'''
+        with self.engine.connect() as conn:
+            db_req = (self
+                      .user_requests_table
+                      .select()
+                      .where(self.user_requests_table.c.user_id == user_id)
+                      )
+            ids = [id for _, id in conn.execute(db_req)]
+        res_dict = {}
+        with self.engine.connect() as conn:
+            db_req = (self
+                      .request_table
+                      .select()
+                      .where(self.request_table.c.request_id.in_(ids))
+                      )
+            for id, req in conn.execute(db_req):
+                res_dict[id] = req
+        return res_dict
+
+    # -- UNSUBSCRIBE USER FROM CHOSEN JOB --
+
+    def delete_user_req_links(self, user_id: int, req: str):
+        '''Delete link between the user and request'''
+        pass
+
 
 if __name__ == '__main__':
-    # test = DB_reqs()
-    # test.generate_report()
+    test = DB_reqs()
+    print(test.get_list_of_subscribes(472730224))
     pass
