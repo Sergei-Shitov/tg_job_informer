@@ -191,8 +191,8 @@ class DB_reqs():
                       .where(self.user_requests_table.c.user_id == user_id)
                       .where(self.user_requests_table.c.request_id == req_id)
                       )
-            req_list = conn.execute(db_req)
-        # return req_list
+            conn.execute(db_req)
+            conn.commit()
         pass
 
 
