@@ -14,7 +14,7 @@ class DB_reqs():
     def __init__(self):
         # set main parameters for worcing with database
         self.engine = eng(
-            f'postgresql://{DB_USER}:{DB_PASSWORD}@bot_db:5432/{DB_NAME}')
+            f'postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5432/{DB_NAME}')
         self.dw_metadata_obj = MetaData(schema='dw')
         self.marts_metadata_obj = MetaData(schema='marts')
         self.user_table = Table('users',
@@ -90,6 +90,21 @@ class DB_reqs():
 
     # -- ADDING REQUESTS -- (moved to db_init)
 
+    # -- GETTING LIST OF REQUESTS FOR MANAGING
+
+    def get_reqs_list(self):
+        '''Getting list of requests from DB for managing users subscribes'''
+        # get ids for user's requests
+        with self.engine.connect() as conn:
+            db_req = (self
+                      .request_table
+                      .select()
+                      )
+            req_dict = {}
+            for id, req in conn.execute(db_req):
+                req_dict[req] = id
+        return req_dict
+
     # -- ADDING "USER - REQUESTS" LINKS --
 
     def add_user_req_links(self, user_id: int, req: list):
@@ -162,13 +177,22 @@ class DB_reqs():
                       .where(self.request_table.c.request_id.in_(ids))
                       )
             for id, req in conn.execute(db_req):
-                res_dict[id] = req
+                res_dict[req] = id
         return res_dict
 
     # -- UNSUBSCRIBE USER FROM CHOSEN JOB --
 
-    def delete_user_req_links(self, user_id: int, req: str):
+    def delete_user_req_links(self, user_id: int, req_id: int):
         '''Delete link between the user and request'''
+        with self.engine.connect() as conn:
+            db_req = (self
+                      .user_requests_table
+                      .delete()
+                      .where(self.user_requests_table.c.user_id == user_id)
+                      .where(self.user_requests_table.c.request_id == req_id)
+                      )
+            req_list = conn.execute(db_req)
+        # return req_list
         pass
 
 

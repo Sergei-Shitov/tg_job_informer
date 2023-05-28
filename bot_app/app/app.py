@@ -23,7 +23,7 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
-# create list of jobs for catching buttons
+# create list of jobs for catching subscribtion buttons
 job_list = []
 for key in JOB_DICT:
     for job in JOB_DICT[key]:
@@ -31,6 +31,9 @@ for key in JOB_DICT:
 
 # init db actions
 db = DB_reqs()
+
+# get dict of jobs with ids from DB for managing users subscriptions
+db_job_list = db.get_reqs_list()
 
 # create buttons for area choice
 inline_kb = InlineKeyboardMarkup()
@@ -54,8 +57,20 @@ async def send_welcome(msg: types.Message):
 async def process_command_choise(msg: types.Message):
     await msg.reply("Выбери направление", reply_markup=inline_kb)
 
+# message with buttons after press 'manage'
+
+
+@dp.message_handler(commands=['manage'])
+async def process_command_manage(msg: types.Message):
+    uns_kb = InlineKeyboardMarkup()
+    users_reqs = db.get_list_of_subscribes(msg.from_user.id)
+    for key in users_reqs:
+        uns_kb.add(InlineKeyboardButton(key, callback_data=key))
+    await msg.reply("Нажми на вакансию чтобы отписаться", reply_markup=uns_kb)
 
 # handle pressing button
+
+
 @dp.callback_query_handler(lambda c: c.data in JOB_DICT)
 async def process_callback_area(callback_query: types.CallbackQuery):
     await bot.answer_callback_query(callback_query.id)
@@ -88,11 +103,25 @@ async def process_callback_job(callback_query: types.CallbackQuery):
     await bot.send_message(callback_query.from_user.id, MESSAGES['done'])
 
 
+# remove job from users subscriptions
+@dp.callback_query_handler(lambda c: c.data in db_job_list)
+async def process_callback_job(callback_query: types.CallbackQuery):
+
+    # add data to db
+    db.delete_user_req_links(callback_query.from_user.id,
+                             db_job_list[callback_query.data])
+
+    # send approve to user
+    await bot.answer_callback_query(callback_query.id)
+    await bot.send_message(callback_query.from_user.id, f'Удалено {callback_query.data}!')
+
+
 # sending planned messages
 async def send_report():
     update = db.generate_report()
     for id in update:
         await bot.send_message(id, 'Новые вакансии:\n' + update[id])
+
 
 # add task to scheduler
 scheduler.add_job(send_report, trigger='cron', hour=9, minute=00)

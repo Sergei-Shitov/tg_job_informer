@@ -7,7 +7,7 @@ import etl_tasks
 default_args = {
     'owner': 'bot_user',
     'depends_on_past': False,
-    'start_date': datetime(2023, 5, 8, 8, 10, 0),  # set today's day
+    'start_date': datetime(2023, 5, 28, 8, 10, 0),  # set today's day
     'email': ['not@used.com'],
     'email_on_failure': False,
     'email_on_retry': False,
