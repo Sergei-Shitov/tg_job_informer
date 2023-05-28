@@ -124,7 +124,7 @@ async def send_report():
 
 
 # add task to scheduler
-scheduler.add_job(send_report, trigger='cron', hour=9, minute=00)
+scheduler.add_job(send_report, trigger='cron', hour=7, minute=00)
 
 
 if __name__ == '__main__':

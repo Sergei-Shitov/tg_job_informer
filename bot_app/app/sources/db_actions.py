@@ -14,7 +14,7 @@ class DB_reqs():
     def __init__(self):
         # set main parameters for worcing with database
         self.engine = eng(
-            f'postgresql://{DB_USER}:{DB_PASSWORD}@localhost:5432/{DB_NAME}')
+            f'postgresql://{DB_USER}:{DB_PASSWORD}@bot_db:5432/{DB_NAME}')
         self.dw_metadata_obj = MetaData(schema='dw')
         self.marts_metadata_obj = MetaData(schema='marts')
         self.user_table = Table('users',

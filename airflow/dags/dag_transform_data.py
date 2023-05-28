@@ -8,7 +8,7 @@ default_args = {
     'owner': 'bot_user',
     'depends_on_past': False,
     'email': ['not@used.com'],
-    'start_date': datetime(2023, 5, 28, 8, 5, 0),  # set today's day
+    'start_date': datetime(2023, 5, 28, 6, 5, 0),  # set today's day
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
