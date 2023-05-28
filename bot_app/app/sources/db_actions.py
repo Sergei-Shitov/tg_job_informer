@@ -197,6 +197,6 @@ class DB_reqs():
 
 
 if __name__ == '__main__':
-    test = DB_reqs()
-    print(test.get_list_of_subscribes(472730224))
+    # test = DB_reqs()
+    # print(test.get_list_of_subscribes())
     pass
