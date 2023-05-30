@@ -3,7 +3,7 @@
 ## Quick Start
 
 1. Clone the repository to your machine.
-2. Pass your TOKEN to [env](.env) file. (How to create bot and get token see [here](https://core.telegram.org/bots#how-do-i-create-a-bot))
+2. Pass your TOKEN to [env](_.env) file. (How to create bot and get token see [here](https://core.telegram.org/bots#how-do-i-create-a-bot))
 3. Go to [dags](./airflow/dags/) folder and set todays date into string in every dag file
 \
 `'start_date': datetime(yyyy, m, d, 8, 0, 0)`
