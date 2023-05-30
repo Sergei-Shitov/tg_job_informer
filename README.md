@@ -1,6 +1,6 @@
 # tg_job_informer
 
-Application based on TG-bot which allow to get dayly notifications about new open job positions and get analyze of dynamics of market.
+Application based on TG-bot which allow to get daily notifications about new open job positions and get analyze of dynamics of market.
 
 ## Introdution
 
