@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from airflow import DAG
+from airflow.sensors.external_task import ExternalTaskSensor
 from airflow.operators.python import PythonOperator
 import etl_tasks
 
@@ -7,7 +8,7 @@ default_args = {
     'owner': 'bot_user',
     'depends_on_past': False,
     'email': ['not@used.com'],
-    'start_date': datetime(2023, 5, 28, 6, 15, 0),  # set today's day
+    'start_date': datetime(2023, 5, 30, 6, 0, 0),  # set today's day
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
@@ -24,6 +25,15 @@ with DAG(
     is_paused_upon_creation=False
 ) as dag:
 
+    load_sensor = ExternalTaskSensor(
+        external_dag_id='load_stg',
+        external_task_id='rename_res',
+        timeout=600,
+        allowed_states=["success"],
+        failed_states=["failed", "skipped"],
+        mode='poke'
+    )
+
     update_dw_table = PythonOperator(
         task_id='Update_dw_table',
         python_callable=etl_tasks.add_to_working_table,
@@ -36,4 +46,4 @@ with DAG(
         dag=dag
     )
 
-    update_dw_table >> load_mart
+    load_sensor >> update_dw_table >> load_mart

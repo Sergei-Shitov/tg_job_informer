@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from airflow import DAG
+from airflow.sensors.external_task import ExternalTaskSensor
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 import etl_tasks
@@ -8,7 +9,7 @@ default_args = {
     'owner': 'bot_user',
     'depends_on_past': False,
     'email': ['not@used.com'],
-    'start_date': datetime(2023, 5, 28, 6, 5, 0),  # set today's day
+    'start_date': datetime(2023, 5, 30, 6, 0, 0),  # set today's day
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
@@ -25,6 +26,15 @@ with DAG(
     is_paused_upon_creation=False
 ) as dag:
 
+    extract_sensor = ExternalTaskSensor(
+        external_dag_id='extract_data',
+        external_task_id='getting_data',
+        timeout=600,
+        allowed_states=["success"],
+        failed_states=["failed", "skipped"],
+        mode='poke'
+    )
+
     assemble_data = PythonOperator(
         task_id='transform_data',
         python_callable=etl_tasks.combine_to_csv,
@@ -37,4 +47,4 @@ with DAG(
         dag=dag
     )
 
-    assemble_data >> remove_json
+    extract_sensor >> assemble_data >> remove_json
