@@ -27,6 +27,7 @@ with DAG(
 ) as dag:
 
     extract_sensor = ExternalTaskSensor(
+        task_id='extract_sensor',
         external_dag_id='extract_data',
         external_task_id='getting_data',
         timeout=600,

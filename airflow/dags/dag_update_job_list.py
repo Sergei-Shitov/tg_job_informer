@@ -26,6 +26,7 @@ with DAG(
 ) as dag:
 
     load_sensor = ExternalTaskSensor(
+        task_id='load_sensor',
         external_dag_id='load_stg',
         external_task_id='rename_res',
         timeout=600,

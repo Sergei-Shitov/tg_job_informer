@@ -27,6 +27,7 @@ with DAG(
 ) as dag:
 
     transform_sensor = ExternalTaskSensor(
+        task_id='transform_sensor',
         external_dag_id='transform_data',
         external_task_id='clean_tmp_stg',
         timeout=600,
