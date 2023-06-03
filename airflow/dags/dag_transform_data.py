@@ -33,6 +33,7 @@ with DAG(
         timeout=600,
         allowed_states=["success"],
         failed_states=["failed", "skipped"],
+        execution_delta=timedelta(minutes=5),
         mode='poke'
     )
 
