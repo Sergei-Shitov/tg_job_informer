@@ -9,7 +9,7 @@ default_args = {
     'owner': 'bot_user',
     'depends_on_past': False,
     'email': ['not@used.com'],
-    'start_date': datetime(2023, 5, 30, 6, 0, 0),  # set today's day
+    'start_date': datetime(2023, 6, 4, 6, 0, 0),  # set today's day
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
@@ -33,7 +33,6 @@ with DAG(
         timeout=600,
         allowed_states=["success"],
         failed_states=["failed", "skipped"],
-        execution_delta=timedelta(minutes=5),
         mode='poke'
     )
 
