@@ -120,7 +120,11 @@ async def process_callback_job(callback_query: types.CallbackQuery):
 async def send_report():
     update = db.generate_report()
     for id in update:
-        await bot.send_message(id, 'Новые вакансии:\n' + update[id])
+        # Handle faults with user
+        try:
+            await bot.send_message(id, 'Новые вакансии:\n' + update[id])
+        except Exception as e:
+            print(f'Sending to user with {id} finished with err {e}')
 
 
 # add task to scheduler
