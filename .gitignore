@@ -1,0 +1,11 @@
+.ipynb_checkpoints
+new_testing.ipynb
+.env
+venv
+bot_db
+airflow_db
+airflow/logs
+airflow/plugins
+temp_storage
+airflow/dags/__pycache__
+bot_app/app/sources/__pycache__

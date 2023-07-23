@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from airflow import DAG
-from airflow.sensors.external_task import ExternalTaskSensor
+from airflow.sensors.filesystem import FileSensor
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 import etl_tasks
@@ -9,7 +9,7 @@ default_args = {
     'owner': 'bot_user',
     'depends_on_past': False,
     'email': ['not@used.com'],
-    'start_date': datetime(2023, 6, 11, 6, 30, 0),  # set today's day
+    'start_date': datetime(2023, 7, 23, 6, 30, 5),  # set today's day
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
@@ -26,26 +26,30 @@ with DAG(
     is_paused_upon_creation=False
 ) as dag:
 
-    extract_sensor = ExternalTaskSensor(
-        task_id='extract_sensor',
-        external_dag_id='extract_data',
-        external_task_id='getting_data',
-        timeout=600,
-        allowed_states=["success"],
-        failed_states=["failed", "skipped"],
-        mode='poke'
+    extract_sensor = FileSensor(
+        task_id='extract_comlete',
+        filepath='/temp_storage/EXTRACT_SUCCESS.TXT'
     )
 
     assemble_data = PythonOperator(
         task_id='transform_data',
-        python_callable=etl_tasks.combine_to_csv,
-        dag=dag
+        python_callable=etl_tasks.combine_to_csv
     )
 
     remove_json = BashOperator(
         task_id='clean_tmp_stg',
-        bash_command='rm /temp_storage/*.json',
-        dag=dag
+        bash_command='rm /temp_storage/*.json'
     )
 
-    extract_sensor >> assemble_data >> remove_json
+    remove_extr_suc = BashOperator(
+        task_id='remove_extr_suc',
+        bash_command='rm /temp_storage/EXTRACT_SUCCESS.TXT'
+    )
+
+    transform_success = BashOperator(
+        task_id='_transform_success',
+        bash_command='touch /temp_storage/TRANSFORM_SUCCESS.TXT'
+    )
+
+    extract_sensor >> assemble_data >> [
+        remove_json, remove_extr_suc, transform_success]
